@@ -15,11 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InTouch.UserService.Infrast
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InTouch.UserService.Query", "InTouch.UserService.Query\InTouch.UserService.Query.csproj", "{0B4772D9-88FD-40E7-893D-62251480E556}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{897DAFA5-2E92-4B2F-923A-284F057A54A4}"
-	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
