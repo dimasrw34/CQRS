@@ -34,6 +34,7 @@ builder.Services.AddReadOnlyRepositories();
 builder.Services.AddCacheService(builder.Configuration);
 
 
+builder.Services.AddSwaggerGen();
 
 // FluentValidation global configuration.
 ValidatorOptions.Global.DisplayNameResolver = (_, member, _) => member?.Name;
