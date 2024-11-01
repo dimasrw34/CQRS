@@ -7,11 +7,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\InTouch.UserService.Application\InTouch.UserService.Application.csproj" />
+    <ProjectReference Include="..\InTouch.UserService.Core\InTouch.UserService.Core.csproj" />
+    <ProjectReference Include="..\InTouch.UserService.Domain\InTouch.UserService.Domain.csproj" />
+    <ProjectReference Include="..\InTouch.UserService.Infrastructure\InTouch.UserService.Infrastructure.csproj" />
+    <ProjectReference Include="..\InTouch.UserService.Query\InTouch.UserService.Query.csproj" />
   </ItemGroup>
 
 </Project>
