@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
-
 using InTouch.UserService.Domain;
 
 namespace InTouch.Infrastructure.Data;
@@ -15,8 +14,7 @@ public sealed class UserWriteOnlyRepository (IDbContext context) :
     public async Task<Guid> AddAsync(User user) 
     {
                 await ExecuteAsync(
-                    @"BEGIN; INSERT INTO public.users (id, email, password, name, surname, phone) 
-                                        VALUES (@userid,  @email, @password,@name, @surname, @phone);",
+                    UserScripts.GetScript(nameof(AddAsync)),
                     _transaction,
                     new { userid = user.Id,
                                 email = user.Email.ToString(),
@@ -29,7 +27,8 @@ public sealed class UserWriteOnlyRepository (IDbContext context) :
     }
 
     public async Task UpdateAsync(User user) =>
-        await ExecuteAsync(@"BEGIN; UPDATE users SET email=@email WHERE id =@id;",
+        await ExecuteAsync(
+            UserScripts.GetScript(nameof(UpdateAsync)),
             _transaction,
             new
             {
@@ -40,18 +39,19 @@ public sealed class UserWriteOnlyRepository (IDbContext context) :
 
     public async Task<User> GetByIdAsync(Guid id) =>
         await QuerySingleAsync<User>(
-            @"SELECT id, email, password, name, surname, phone " +
-            "FROM users WHERE id=@id;",
+            UserScripts.GetScript(nameof(GetByIdAsync)),
             _transaction,
             new {id = id});
     
     public async Task<bool> ExistByEmailAsync(Email email) =>
-        await QuerySingleAsync<bool>(@"SELECT public.check_user_login (@email);",
+        await QuerySingleAsync<bool>(
+            UserScripts.GetScript(nameof(ExistByEmailAsync)),
                                  _transaction,
                         new {email = email.Address});
     
     public async Task<bool> ExistByEmailAndIdAsync(Email email, Guid currentId) =>
-        await QuerySingleAsync<bool>(@"SELECT public.check_user_login_id (@email, @id);",
+        await QuerySingleAsync<bool>(
+            UserScripts.GetScript(nameof(ExistByEmailAndIdAsync)),
             _transaction,
             new
             {
@@ -60,7 +60,8 @@ public sealed class UserWriteOnlyRepository (IDbContext context) :
             });
 
     public async Task DeleteAsync(Guid id) =>
-        await ExecuteAsync("BEGIN; DELETE FROM users WHERE id=@id",
+        await ExecuteAsync(
+            UserScripts.GetScript(nameof(DeleteAsync)),
                             _transaction,
                         new {id = id});
 }

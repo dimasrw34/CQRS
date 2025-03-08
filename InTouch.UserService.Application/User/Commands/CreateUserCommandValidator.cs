@@ -6,13 +6,13 @@ public sealed class CreateUserCommandValidator: AbstractValidator<CreateUserComm
 {
     public CreateUserCommandValidator()
     {
-        /*RuleFor(command => command.FirstName)
+        RuleFor(command => command.FirstName)
             .NotEmpty()
             .MaximumLength(100);
 
         RuleFor(command => command.LastName)
             .NotEmpty()
-            .MaximumLength(100);*/
+            .MaximumLength(100);
 
         RuleFor(command => command.Email)
             .NotEmpty()

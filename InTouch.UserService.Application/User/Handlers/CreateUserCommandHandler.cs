@@ -49,8 +49,8 @@ public sealed class CreateUserCommandHandler(
         var _user = UserFactory.Create(
             email,
             request.Password,
-            request.Name,
-            request.Surname,
+            request.FirstName,
+            request.LastName,
             request.Phone);
         
         //Создаем ventStore

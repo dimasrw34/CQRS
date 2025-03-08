@@ -33,7 +33,7 @@ public static class ConfigureService
             .AddTransient<IDbConnectionFactory> (options =>
             {
                 var builder = new NpgsqlConnectionStringBuilder(
-                                                "Host=192.168.1.116;Database=postgres;Username=root;Password=example;" + 
+                                                "Host=192.168.1.40;Database=secbase;Username=dima;Password=123;" + 
                                                 "Persist Security Info=True;Application Name=userservice;Enlist=true");
                 return new DbConnectionFactory(() =>
                 {
