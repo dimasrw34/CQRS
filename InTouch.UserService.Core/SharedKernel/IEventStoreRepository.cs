@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace InTouch.UserService.Core;
@@ -12,5 +13,5 @@ public interface IEventStoreRepository //: IDisposable
     /// </summary>
     /// <param name="eventStores">Событие сохраняется в хранилище.</param>
     /// <returns>Задача, представляющая асинхронную операцию.</returns>
-    Task StoreAsync(EventStore? eventStores);
+    Task StoreAsync(EventStore? eventStores, CancellationToken cancellationToken = default);
 }

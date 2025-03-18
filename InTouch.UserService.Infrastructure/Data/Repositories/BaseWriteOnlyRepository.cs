@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Transactions;
 using Dapper;
@@ -24,10 +23,8 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
     protected readonly IUnitOfWork UnitOfWork = unitOfWork;
     
     private readonly Dictionary<string, PropertyInfo> ColumnMappings = PropertyHelper.GetColumnMappings(typeof(TEntity));
+
     protected virtual string TableName => typeof(TEntity).Name.ToLower();
-    
-    
-    
     
     public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -45,7 +42,7 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
 
     public async Task<TEntity> GetByIdAsync(TKey id, CancellationToken cancellationToken = default)
     {
-        using var connection = await _connectionFactory.CreateOpenConnectionAsync(default);
+        var connection = _connectionFactory.GetConnection;
         var sql = $"SELECT {string.Join(", ", PropertyHelper.GetColumnNames(typeof(TEntity)))} FROM {TableName} WHERE \"id\" = @id";
         
         return await connection.QueryFirstOrDefaultAsync<TEntity>(
@@ -57,51 +54,53 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
         );
     }
 
-    public async Task<Guid> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public async Task<TKey> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        await using var connection = (NpgsqlConnection) await _connectionFactory.CreateOpenConnectionAsync(default);
-        connection.EnlistTransaction(Transaction.Current);
-        //NB: первым параметром засовываем id, чтобы всегда быть уверенным, что первый в коллекции
-        var properties = ColumnMappings.Values.Where(p => p.Name == "id").ToList();
-        properties.AddRange(ColumnMappings.Values.Where(p => p.Name != "id").ToList());
-        
-        
-        var columns = string.Join(", ", properties.Select(p => $"\"{p.Name}\""));
-        var values = string.Join(", ", properties.Select((p, i) => $"@param{i}"));
+        var connection = _connectionFactory.GetConnection;
+        var paramsics = GetCreateParams(entity);
+        var idValue = Guid.NewGuid();
+        await connection.ExecuteAsync(paramsics.Item1, paramsics.Item2, UnitOfWork.Transaction);
+        return await Task.FromResult((TKey)Convert.ChangeType(idValue, typeof(TKey)));
+    }
 
-        var sql = $"INSERT INTO {TableName} + s ({columns}) VALUES ({values}) ;";
+    private (string, DynamicParameters) GetCreateParams(TEntity entity)
+    {
+        // Получаем все свойства сущности за исключением события
+        var allProperties = typeof(TEntity).GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(p => p.Name != "DomainEvents")
+            .ToList();
+        
+        // Формируем список колонок с учётом кавычек для PostgreSQL
+        var columns = string.Join(", ", allProperties.Select(p => $"\"{p.Name}\"")).ToLower();
+    
+        // Формируем параметры, добавляя @param0 в начало
+        var values = string.Join(", ", allProperties.Select((p, i) => "@param" + i));
+        
 
+        var sql = $"INSERT INTO {TableName}s ({columns}) VALUES ({values}) ;";
+        
         var parameters = new DynamicParameters();
-        /*
-        for (int i = 0; i < properties.Count; i++)
+        int paramIndex = 0;
+        foreach (var property in allProperties)
         {
-            //parameters.Add($"param{i}", properties[i].GetValue(entity), DbTypeMapper.GetDbType(properties[i].GetType() ?? typeof(object)),ParameterDirection.InputOutput);
-            parameters.Add($"param{i}", properties[i].GetValue(entity));
+            var propertyValue = property.GetValue(entity);
+            // Если свойство реализует IValueObject, используем его значение
+            if (propertyValue is IValueObject valueObject)
+            {
+                parameters.Add($"param{paramIndex}", valueObject.ToString());
+            }
+            else
+            {
+                parameters.Add($"param{paramIndex}", propertyValue);
+            }
+            paramIndex++;
         }
-*/
-
-         
-        
-        //await connection.ExecuteAsync(sql, parameters, UnitOfWork.Transaction);
-        await connection.ExecuteAsync(@"INSERT INTO public.users (id, login, password, name, lastname, email, phone) 
-                                        VALUES (@userid,  @login, @password,@name, @lastname, @email, @phone);", 
-            new { userid =Guid.NewGuid(),
-                login = "sfdsdf",
-                password = "fdfs",
-                name = "dfsdfsd",
-                lastname = "sdfsdf",
-                email = "dfsdf@fsdf.com",
-                phone = "77777777",
-            }, 
-            UnitOfWork.Transaction);
-        
-        //return await Task.FromResult((TKey)Convert.ChangeType(Guid.NewGuid(), typeof(TKey)));
-        return Guid.NewGuid();
+        return (sql, parameters);
     }
 
     public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        using var connection = await _connectionFactory.CreateOpenConnectionAsync(default);
+        var connection = _connectionFactory.GetConnection;
         var properties = ColumnMappings.Values.Where(p => p.Name != "id").ToList();
         var sets = string.Join(", ", properties.Select(p => $"\"{p.Name}\" = @{p.Name}"));
 
@@ -119,10 +118,29 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
 
     public async Task DeleteAsync(TKey id, CancellationToken cancellationToken = default)
     {
-        using var connection = await _connectionFactory.CreateOpenConnectionAsync(default);
+        var connection = _connectionFactory.GetConnection;
         var sql = $"DELETE FROM {TableName} WHERE \"id\" = @id";
 
         await connection.ExecuteAsync(sql, new { id }, UnitOfWork.Transaction);
+    }
+
+    public async Task StoreAsync(EventStore? eventStore, CancellationToken cancellationToken= default)
+    {
+        //await using var connection = (NpgsqlConnection) await _connectionFactory.CreateOpenConnectionAsync(default);
+        var connection = _connectionFactory.GetConnection;
+        //connection.EnlistTransaction(Transaction.Current);
+        
+        await connection.ExecuteAsync 
+        (@"INSERT INTO public.eventstores (id, datastamp, messagetype, aggregateid, createdat) 
+                            VALUES (@eventdid_, @datastamp_, @messagetype_, @aggregateid_, @createdat_);",
+            new { eventdid_= eventStore.Id,
+                datastamp_ = eventStore.Data,
+                messagetype_ = eventStore.MessageType,
+                aggregateid_ = eventStore.AggregateID,
+                createdat_ = eventStore.OccuredOn
+            }
+            ,UnitOfWork.Transaction
+        );
     }
 }
 

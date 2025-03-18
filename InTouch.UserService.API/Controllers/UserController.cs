@@ -13,8 +13,8 @@ using InTouch.UserService.Models;
 using InTouch.UserService.Query;
 using Microsoft.AspNetCore.Http;
 
-namespace InTouch.UserService.Controllers
-{
+namespace InTouch.UserService.Controllers;
+
     [Route("api/[controller]")]
     [ApiController]
     public class UserController (IMediator mediator) : ControllerBase
@@ -22,7 +22,7 @@ namespace InTouch.UserService.Controllers
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(ApiResponse<CreatedUserResponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<CreatedResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Create([FromBody][Required] CreateUserCommand command) =>
@@ -61,4 +61,3 @@ namespace InTouch.UserService.Controllers
         public async Task<IActionResult> GetAll() =>
             (await mediator.Send(new GetAllUserQuery())).ToActionResult();
     }
-}

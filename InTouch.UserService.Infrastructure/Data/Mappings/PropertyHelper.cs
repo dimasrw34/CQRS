@@ -10,7 +10,7 @@ public static class PropertyHelper
 {
     public static Dictionary<string, PropertyInfo> GetColumnMappings(Type entityType)
     {
-        return entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+        return entityType.GetProperties()
             .Where(p => p.CanRead && p.CanWrite)
             .ToDictionary(
                 p => p.Name.ToLower(),

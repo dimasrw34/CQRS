@@ -17,9 +17,11 @@ public interface IUnitOfWork : IDisposable
     /// Сохраняет изменения, внесенные в единицу работы, асинхронно.
     /// </summary>
     /// <returns>Задача, представляющая асинхронную операцию.</returns>
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+    Task SaveChangesAsync(CancellationToken cancellationToken);
 
-    IWriteOnlyRepository<TEntity,TKey> GetRepository<TEntity, TKey>() 
+    Task RollbackChangesAsync(CancellationToken cancellationToken);
+
+    IWriteOnlyRepository<TEntity, TKey> GetRepository<TEntity, TKey>() 
         where TEntity : IEntity<TKey> 
         where TKey : IEquatable<TKey>;
     

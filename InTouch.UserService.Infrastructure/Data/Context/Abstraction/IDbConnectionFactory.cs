@@ -7,4 +7,5 @@ namespace InTouch.Infrastructure.Data;
 public interface IDbConnectionFactory
 {
     Task<IDbConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken);
+    IDbConnection GetConnection { get; }
 }

@@ -64,7 +64,7 @@ public class UpdateUserCommandHandler(
         {
             await repository.UpdateAsync(_user);
             await eventStoreRepository.StoreAsync(eventStore);
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {

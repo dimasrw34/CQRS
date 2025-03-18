@@ -10,13 +10,13 @@ namespace InTouch.UserService.Core;
 /// </summary>
 /// <typeparam name="TEntity"></typeparam>
 /// <typeparam name="TKey"></typeparam>
-public interface IWriteOnlyRepository<TEntity, in TKey> 
+public interface IWriteOnlyRepository<TEntity, TKey> : IEventStoreRepository
     where TEntity : IEntity<TKey>
-    where TKey : IEquatable<TKey>
+    where TKey : IEquatable<TKey> 
 {
     Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
     Task<TEntity> GetByIdAsync(TKey id, CancellationToken cancellationToken = default);
-    Task<Guid> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
+    Task<TKey> CreateAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task DeleteAsync(TKey id, CancellationToken cancellationToken = default);
 }

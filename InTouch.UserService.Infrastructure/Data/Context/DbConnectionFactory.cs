@@ -8,17 +8,12 @@ using Npgsql;
 
 namespace InTouch.Infrastructure.Data;
 
-public sealed class DbConnectionFactory: IDbConnectionFactory
+public sealed class DbConnectionFactory (Func<NpgsqlDataSource> dataSourceFactory) : IDbConnectionFactory
 {
-    private readonly Func<NpgsqlDataSource> _dataSourceFactory;
+    private readonly Func<NpgsqlDataSource> _dataSourceFactory= dataSourceFactory ?? throw new ArgumentNullException(nameof(dataSourceFactory));
     private readonly int _maxRetries = 3;
     private readonly TimeSpan _retryDelay = TimeSpan.FromSeconds(1);
-
-    public DbConnectionFactory(Func<NpgsqlDataSource> dataSourceFactory)
-    {
-        _dataSourceFactory = dataSourceFactory ?? throw new ArgumentNullException(nameof(dataSourceFactory));
-    }
-
+    
     public async Task<IDbConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
     {
         for (int attempt = 1; attempt <= _maxRetries; attempt++)
@@ -30,10 +25,10 @@ public sealed class DbConnectionFactory: IDbConnectionFactory
                 if (cancellationToken.IsCancellationRequested)
                     throw new OperationCanceledException();
 
-                var connection = await dataSource.OpenConnectionAsync(cancellationToken);
-                await VerifyConnectionAsync(connection, cancellationToken);
+                GetConnection = await dataSource.OpenConnectionAsync(cancellationToken);
+                await VerifyConnectionAsync((NpgsqlConnection)GetConnection, cancellationToken);
                 
-                return connection;
+                return (NpgsqlConnection)GetConnection;
             }
             catch (OperationCanceledException)
             {
@@ -55,6 +50,9 @@ public sealed class DbConnectionFactory: IDbConnectionFactory
         throw new InvalidOperationException(
             $"Не удалось создать подключение после {_maxRetries} попыток.");
     }
+
+    public IDbConnection GetConnection { get; private set; } 
+
     private async Task VerifyConnectionAsync(NpgsqlConnection connection, 
         CancellationToken cancellationToken = default)
     {
