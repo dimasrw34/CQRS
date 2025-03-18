@@ -20,5 +20,5 @@ public class EventToQueryModelProfile : Profile
     public override string ProfileName => nameof(EventToQueryModelProfile);
 
     private static UserQueryModel CreateUserQueryModel<TEvent>(TEvent @event) where TEvent : UserBaseEvent =>
-        new(@event.Id, @event.Email, @event.Password, @event.Name, @event.Surname, @event.Phone);
+        new(@event.Id, @event.Login, @event.Password, @event.Name, @event.Email, @event.LastName, @event.Phone);
 }

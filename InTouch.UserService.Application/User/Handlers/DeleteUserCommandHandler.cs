@@ -13,14 +13,16 @@ namespace InTouch.Application;
 
 public class DeleteUserCommandHandler(
     IValidator<DeleteUserCommand> validator,
-    IDbContext dbContext,
-    IUserWriteOnlyRepository<User, Guid> repository,
+    IUserWriteOnlyRepository<User?, Guid> repository,
     IEventStoreRepository eventStoreRepository,
-    IMediator mediator) 
+    IMediator mediator,
+    IUnitOfWork unitOfWork,
+    CancellationToken cancellationToken = default) 
     : IRequestHandler<DeleteUserCommand, Result>
 {
-    private readonly IDbContext _context = dbContext;
-    private readonly IUserWriteOnlyRepository<User, Guid> _repository = repository;
+
+    private readonly IUserWriteOnlyRepository<User?, Guid> _repository = repository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     
     public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
@@ -50,11 +52,10 @@ public class DeleteUserCommandHandler(
             //добвляем событие состояния
             await eventStoreRepository.StoreAsync(eventStore);
             //сохраняем
-            await _context.CommitAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {
-            await _context.RollbackAsync();
             return Result.Error("Ошибка сервера: " + e);
         }
         

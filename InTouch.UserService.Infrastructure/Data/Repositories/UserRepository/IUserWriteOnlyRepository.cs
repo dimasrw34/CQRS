@@ -7,7 +7,7 @@ using InTouch.UserService.Domain;
 namespace InTouch.Infrastructure.Data;
 
 public interface IUserWriteOnlyRepository<TEntity, in TKey> : 
-    IWriteOnlyRepository<TEntity, TKey> 
+    IWriteOnlyRepository<TEntity,TKey> 
     where TEntity : IEntity<TKey> 
     where TKey : IEquatable<TKey>
 {

@@ -1,3 +1,4 @@
+using System;
 using InTouch.UserService.Core;
 
 namespace InTouch.UserService.Domain;
@@ -21,19 +22,20 @@ public sealed class User : BaseEntity, IAggregateRoot
     /// <param name="email"></param>
     /// <param name="password"></param>
     /// <param name="name"></param>
-    /// <param name="surname"></param>
+    /// <param name="lastname"></param>
     /// <param name="phone"></param>
-    public User(Email email, string password, string name, string surname,string phone)
-        {
-            Email = email;
-            Password = password;
-            Name = name;
-            Surname = surname;
-            Phone = phone;
-            //Добавляем событие в брокер событий
-            AddDomainEvent(new UserCreatedEvent(Id, email.Address, password,name,surname, phone));
-            
-        }
+    public User(string login, string password, string name, string lastname, Email email, string phone)
+    {
+        Login = login;
+        Password = password;
+        Name = name;
+        LastName = lastname;
+        Email = email;
+        Phone = phone;
+        //Добавляем событие в брокер событий
+        AddDomainEvent(new UserCreatedEvent(Id, Login, password, name, lastname, email.Address, phone));
+  
+    }
     /// <summary>
     /// Меняет почтовый адрес пользователя
     /// </summary>
@@ -43,7 +45,7 @@ public sealed class User : BaseEntity, IAggregateRoot
         if(Email.Equals(newEmail))
             return;
         Email = newEmail;
-        AddDomainEvent(new UserUpdatedEvent(Id, newEmail.Address, Password, Name, Surname, Phone));
+        AddDomainEvent(new UserUpdatedEvent(Id, Login, Password, Name, LastName, newEmail.Address, Phone));
     }
     
     
@@ -55,7 +57,7 @@ public sealed class User : BaseEntity, IAggregateRoot
     {
         if (_isDeleted) return;
         _isDeleted = true;
-        AddDomainEvent(new UserDeletedEvent(Id, Email.Address, Password, Name, Surname, Phone));
+        AddDomainEvent(new UserDeletedEvent(Id, Login , Password, Name, LastName, Email.Address, Phone));
     }
 
     #endregion Конструктор и методы с событиями
@@ -66,7 +68,7 @@ public sealed class User : BaseEntity, IAggregateRoot
     /// <summary>
     /// Получаем почту пользователя
     /// </summary>
-    public Email Email { get; private set; }
+    public string Login { get; }
     
     /// <summary>
     /// Получаем пароль пользователя
@@ -81,11 +83,17 @@ public sealed class User : BaseEntity, IAggregateRoot
     /// <summary>
     /// Получаем фамилию пользователя
     /// </summary>
-    public string Surname { get; }
+    public string LastName { get; }
+    
+    /// <summary>
+    /// Получаем почту пользователя
+    /// </summary>
+    public Email Email { get; private set; }
     
     /// <summary>
     /// Получаем телефон пользователя
     /// </summary>
     public string Phone { get; }
+    
     #endregion Свойства
 }

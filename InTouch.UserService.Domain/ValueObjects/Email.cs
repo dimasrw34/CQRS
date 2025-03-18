@@ -14,7 +14,6 @@ public sealed record Email
     /// <summary>
     /// Конструктор по умолчанию для ORM
     /// </summary>
-    /// <param name="s"></param>
     public Email(){ }
 
     /// <summary>
