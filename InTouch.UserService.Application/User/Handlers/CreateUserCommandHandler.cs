@@ -14,16 +14,17 @@ namespace InTouch.Application;
 
 public sealed class CreateUserCommandHandler(
     IValidator<CreateUserCommand> validator,
-    IDbContext dbContext,
     IUserWriteOnlyRepository<User,Guid> userWriteOnlyRepository,
     IEventStoreRepository eventStoreRepository,
-    IMediator mediator
-    ) : IRequestHandler<CreateUserCommand, Result<CreatedUserResponse>>
+    IUnitOfWork unitOfWork,
+    IMediator mediator,
+    CancellationToken cancellationToken = default
+    ) : IRequestHandler<CreateUserCommand, Result<CreatedResponse>>
 {
-    private readonly IDbContext _context = dbContext;
     private readonly IUserWriteOnlyRepository<User, Guid> _userWriteOnlyRepository = userWriteOnlyRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
    
-    public async Task<Result<CreatedUserResponse>> Handle(
+    public async Task<Result<CreatedResponse>> Handle(
         CreateUserCommand request,
         CancellationToken cancellationToken)
     {
@@ -32,25 +33,26 @@ public sealed class CreateUserCommandHandler(
         if (!_validationResult.IsValid)
         {
             //возвращаем result с ошибкой валидации.
-            return Result<CreatedUserResponse>.Invalid(_validationResult.AsErrors());
+            return Result<CreatedResponse>.Invalid(_validationResult.AsErrors());
         }
         
         // Создаем email value object.
         var email = Email.Create(request.Email).Value;
         
         // Проверяем, что пользователь с такой почтой создан. 
-        if (await userWriteOnlyRepository.ExistByEmailAsync(email))
+        /*if (await userWriteOnlyRepository.ExistByEmailAsync(email))
         {
             return Result<CreatedUserResponse>.Error("Пользователь с данной электронной почтой уже существует.");
-        }
+        }*/
 
         // Создание экземпляра сущности пользователя.
         // При создании экземпляра будет создано событие «UserCreatedEvents».
         var _user = UserFactory.Create(
-            email,
+            request.Login,
             request.Password,
             request.FirstName,
             request.LastName,
+                email,
             request.Phone);
         
         //Создаем ventStore
@@ -58,28 +60,29 @@ public sealed class CreateUserCommandHandler(
            _user.Id,
            "CreateUserEntity",
            _user.ToJson());
-       
-        // Сохранение изменений в БД и срабатывание событий.
-        try
+
+       try
         {
-            userWriteOnlyRepository.AddAsync(_user);
-            eventStoreRepository.StoreAsync(eventStore);
-            dbContext.CommitAsync();
+            //где бы не произошла ошибка, данные всегда будут консистентны
+            
+            // Сохранение изменений в БД и срабатывание событий.
+            await _unitOfWork.GetRepository<User, Guid>().CreateAsync(_user, cancellationToken);
+            await _unitOfWork.GetRepository<EventStore, Guid>().StoreAsync(eventStore, default);
+            
+            //уведомляем через MediatR.INotify для сохранения в БД событий
+            /*foreach (var @event in _user.DomainEvents)
+                {
+                    await mediator.Publish(@event, cancellationToken);
+                }*/
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {
-            await dbContext.RollbackAsync();
-            return Result<CreatedUserResponse>.Error("Ошибка в сохранении данных на сервер!!! " + e.Message);
+            await _unitOfWork.RollbackChangesAsync(cancellationToken);
+            return Result<CreatedResponse>.Error("Ошибка в сохранении данных на сервер!!! " + e.Message);
         }
-
-        //уведомляем через MediatR.INotify для сохранения в БД событий
-        foreach (var @event in _user.DomainEvents)
-        {
-            await mediator.Publish(@event, cancellationToken);
-        }
-        
         // Возвращаем ИД нового пользователя и сообщение об успехе.
-        return Result<CreatedUserResponse>.Success(
-            new CreatedUserResponse(_user.Id), "Пользователь успешно зарегистрирован!");
+        return Result<CreatedResponse>.Success(
+            new CreatedResponse(_user.Id), "Пользователь успешно зарегистрирован!");
     }
 }

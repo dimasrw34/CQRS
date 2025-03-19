@@ -19,10 +19,10 @@ public static class UserScripts
     private static void Build()
     {
         dictionary
-            .Add("AddAsync", @"BEGIN; INSERT INTO public.users (id, email, password, name, surname, phone) 
-                                        VALUES (@userid,  @email, @password,@name, @surname, @phone);");
+            .Add("AddAsync", @"INSERT INTO public.users (id, login, password, name, lasrname, email, phone) 
+                                        VALUES (@userid,  @login, @password,@name, @surname, @email, @phone);");
         dictionary
-            .Add("UpdateAsync",@"BEGIN; UPDATE users SET email=@email WHERE id =@id;");
+            .Add("UpdateAsync",@"UPDATE users SET email=@email WHERE id =@id;");
         
         dictionary
             .Add("GetByIdAsync", @"SELECT id, email, password, name, surname, phone " +
@@ -31,10 +31,10 @@ public static class UserScripts
             .Add("ExistByEmailAsync", @"SELECT public.check_user_login (@email);");
         
         dictionary
-            .Add("ExistByEmailAndIdAsync", "SELECT public.check_user_login_id (@email, @id);");
+            .Add("ExistByEmailAndIdAsync", @"SELECT public.check_user_login_id (@email, @id);");
         
         dictionary
-            .Add("DeleteAsync", "BEGIN; DELETE FROM users WHERE id=@id");
+            .Add("DeleteAsync", @"DELETE FROM users WHERE id=@id");
     }
     private static Dictionary<string, string> dictionary;
     static UserScripts()

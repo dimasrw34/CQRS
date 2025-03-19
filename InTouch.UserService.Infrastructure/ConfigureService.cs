@@ -1,11 +1,10 @@
 using System;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
-
 using InTouch.Infrastructure.Data;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
+using Npgsql;
 
 namespace InTouch.Infrastructure;
 
@@ -29,20 +28,23 @@ public static class ConfigureService
     /// <returns></returns>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        return services
-            .AddTransient<IDbConnectionFactory> (options =>
-            {
-                var builder = new NpgsqlConnectionStringBuilder(
-                                                "Host=192.168.1.40;Database=secbase;Username=dima;Password=123;" + 
-                                                "Persist Security Info=True;Application Name=userservice;Enlist=true");
-                return new DbConnectionFactory(() =>
-                {
-                    var conn = new NpgsqlConnection(builder.ConnectionString);
-                    conn.Open();
-                    return conn;
-                });
-            })
-            .AddScoped<IDbContext, DbContext>();
+        services.AddSingleton<IDbConnectionFactory>(sp =>
+        {
+            var dataSource = sp.GetService<NpgsqlDataSource>();
+            return new DbConnectionFactory(() => dataSource);
+        });
+        var connectionStringBuilder = new NpgsqlConnectionStringBuilder()
+        {
+            Host = "192.168.1.40",
+            Database = "secbase",
+            Username = "dima",
+            //TODO: Реализовать получение из хранилища
+            Password = "123",
+            PersistSecurityInfo = true,
+            ApplicationName = "userservice",
+            Enlist = false
+        };
+        return services.AddNpgsqlDataSource(connectionStringBuilder.ToString());
     }
     
     /// <summary>
@@ -54,7 +56,8 @@ public static class ConfigureService
     {
         return services
             .AddScoped<IUserWriteOnlyRepository<User, Guid>, UserWriteOnlyRepository>()
-            .AddScoped<IEventStoreRepository,UserEventRepository>();
+            .AddScoped<IEventStoreRepository,UserEventRepository>()
+            .AddScoped<IUnitOfWork,UnitOfWork>();
     }
 
     public static void AddDistributedCacheService(this IServiceCollection services) =>

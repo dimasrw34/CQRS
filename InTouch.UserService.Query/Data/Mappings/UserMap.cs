@@ -17,7 +17,7 @@ public class UserMap : IReadDbMapping
             classMap.MapMember(user => user.Id)
                 .SetIsRequired(false);
             
-            classMap.MapMember(user => user.Email)
+            classMap.MapMember(user => user.Login)
                 .SetIsRequired(false);
             
             classMap.MapMember(user => user.Password)
@@ -26,7 +26,10 @@ public class UserMap : IReadDbMapping
             classMap.MapMember(user => user.Name)
                 .SetIsRequired(false);
             
-            classMap.MapMember(user => user.Surname)
+            classMap.MapMember(user => user.LastName)
+                .SetIsRequired(false);
+            
+            classMap.MapMember(user => user.Email)
                 .SetIsRequired(false);
             
             classMap.MapMember(user => user.Phone)

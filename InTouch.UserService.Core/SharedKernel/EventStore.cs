@@ -2,7 +2,7 @@ using System;
 
 namespace InTouch.UserService.Core;
 
-public class EventStore : BaseEvent
+public class EventStore : BaseEvent, IEntity<Guid>
 {
     /// <summary>
     /// Конструктор по умолчанию для Entity Framework или других фреймворков ORM.

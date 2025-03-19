@@ -15,14 +15,14 @@ namespace InTouch.Application;
 
 public class UpdateUserCommandHandler(
     IValidator<UpdateUserCommand> validator,
-    IDbContext dbContext,
-    IUserWriteOnlyRepository<User,Guid> repository,
+    IUnitOfWork unitOfWork,
+    IUserWriteOnlyRepository<User?, Guid> repository,
     IEventStoreRepository eventStoreRepository,
     IMediator mediator)
     : IRequestHandler<UpdateUserCommand, Result>
 {
-    private readonly IDbContext _context = dbContext;
-    private readonly IUserWriteOnlyRepository<User, Guid> _repository = repository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IUserWriteOnlyRepository<User?, Guid> _repository = repository;
 
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
@@ -64,11 +64,11 @@ public class UpdateUserCommandHandler(
         {
             await repository.UpdateAsync(_user);
             await eventStoreRepository.StoreAsync(eventStore);
-            await dbContext.CommitAsync();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)
         {
-            await dbContext.RollbackAsync();
+            //await dbContext.RollbackAsync();
             return Result.Error("Ошибка в сохранении данных на сервер!!! " + e.Message);
         }
         

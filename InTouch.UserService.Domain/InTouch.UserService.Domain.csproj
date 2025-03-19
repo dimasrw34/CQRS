@@ -14,4 +14,8 @@
     <ProjectReference Include="..\InTouch.UserService.Core\InTouch.UserService.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\RoleAggregateRoot\" />
+  </ItemGroup>
+
 </Project>

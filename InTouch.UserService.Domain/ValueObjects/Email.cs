@@ -9,12 +9,11 @@ namespace InTouch.UserService.Domain;
 /// <summary>
 /// Почтовый адрес 
 /// </summary>
-public sealed record Email
+public sealed record Email : IValueObject
 {
     /// <summary>
     /// Конструктор по умолчанию для ORM
     /// </summary>
-    /// <param name="s"></param>
     public Email(){ }
 
     /// <summary>

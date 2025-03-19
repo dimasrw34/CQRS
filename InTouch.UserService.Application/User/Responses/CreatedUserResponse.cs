@@ -13,7 +13,7 @@ namespace InTouch.Application;
 /// как-бы не влияет на поведение объекта Command. 
 /// </summary>
 /// <param name="id">Идентификатор создаваемого объекта</param>
-public sealed class CreatedUserResponse (Guid id) : IResponse
+public sealed class CreatedResponse (Guid id) : IResponse
 {
     public Guid Id { get; } = id;
 }
