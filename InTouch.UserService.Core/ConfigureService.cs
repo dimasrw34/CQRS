@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using MediatR.NotificationPublishers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +17,7 @@ public static class ConfigureService
             cfg.NotificationPublisher = new TaskWhenAllPublisher();
         });
     }
-    
+
     public static IServiceCollection ConfigureAppSettings(this IServiceCollection services) =>
         services
             .AddOptionsWithValidation<ConnectionOptions>()
@@ -38,4 +39,5 @@ public static class ConfigureService
                     .ValidateOnStart()
                     .Services;
             }
+            
 }

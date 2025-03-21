@@ -1,6 +1,13 @@
-﻿namespace InTouch.Application.RolePermissionBinding.Commands;
+﻿using System;
+using Ardalis.Result;
+using MediatR;
+using InTouch.UserService.Core;
 
-public class CreateRolePermissionBindingCommand
-{
-    
-}
+namespace InTouch.Application;
+/// <summary>
+/// Добавление пермишену роли
+/// </summary>
+/// <param name="RoleId"></param>
+/// <param name="PermisionId"></param>
+public sealed record CreateRolePermissionBindingCommand(Guid RoleId, Guid PermissionId)
+    : IRequest<Result<CreatedResponse>>;

@@ -1,4 +1,5 @@
 using System;
+using FDS.UuidV7.NetCore;
 using System.Collections.Generic;
 
 namespace InTouch.UserService.Core;
@@ -16,7 +17,7 @@ public abstract class BaseEntity : IEntity<Guid>
     /// <summary>
     /// Инициализирует новый экземпляр класса <see cref="BaseEntity"/> class.
     /// </summary>
-    protected BaseEntity() => Id = Guid.NewGuid();
+    protected BaseEntity() => Id = UuidV7.Generate();
     /// <summary>
     /// Инициализирует новый экземпляр класса <see cref="BaseEntity"/> с указанным идентификатором.
     /// </summary>

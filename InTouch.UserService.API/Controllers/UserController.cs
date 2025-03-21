@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 
 using InTouch.Application;
+using InTouch.UserService.Core;
 using InTouch.UserService.Extensions;
 using InTouch.UserService.Models;
 using InTouch.UserService.Query;

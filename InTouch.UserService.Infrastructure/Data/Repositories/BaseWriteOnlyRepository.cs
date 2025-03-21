@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 using Dapper;
 using InTouch.UserService.Core;
-using Npgsql;
+
 
 namespace InTouch.Infrastructure.Data;
 
@@ -58,9 +56,8 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
     {
         var connection = _connectionFactory.GetConnection;
         var paramsics = GetCreateParams(entity);
-        var idValue = Guid.NewGuid();
         await connection.ExecuteAsync(paramsics.Item1, paramsics.Item2, UnitOfWork.Transaction);
-        return await Task.FromResult((TKey)Convert.ChangeType(idValue, typeof(TKey)));
+        return await Task.FromResult((TKey)Convert.ChangeType(entity.Id, typeof(TKey)));
     }
 
     private (string, DynamicParameters) GetCreateParams(TEntity entity)
@@ -84,6 +81,7 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
         foreach (var property in allProperties)
         {
             var propertyValue = property.GetValue(entity);
+            
             // Если свойство реализует IValueObject, используем его значение
             if (propertyValue is IValueObject valueObject)
             {
@@ -118,19 +116,13 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
 
     public async Task DeleteAsync(TKey id, CancellationToken cancellationToken = default)
     {
-        var connection = _connectionFactory.GetConnection;
         var sql = $"DELETE FROM {TableName} WHERE \"id\" = @id";
 
-        await connection.ExecuteAsync(sql, new { id }, UnitOfWork.Transaction);
+        await _connectionFactory.GetConnection.ExecuteAsync(sql, new { id }, UnitOfWork.Transaction);
     }
 
-    public async Task StoreAsync(EventStore? eventStore, CancellationToken cancellationToken= default)
-    {
-        //await using var connection = (NpgsqlConnection) await _connectionFactory.CreateOpenConnectionAsync(default);
-        var connection = _connectionFactory.GetConnection;
-        //connection.EnlistTransaction(Transaction.Current);
-        
-        await connection.ExecuteAsync 
+    public async Task StoreAsync(EventStore? eventStore, CancellationToken cancellationToken= default) =>
+        await _connectionFactory.GetConnection.ExecuteAsync 
         (@"INSERT INTO public.eventstores (id, datastamp, messagetype, aggregateid, createdat) 
                             VALUES (@eventdid_, @datastamp_, @messagetype_, @aggregateid_, @createdat_);",
             new { eventdid_= eventStore.Id,
@@ -141,6 +133,4 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
             }
             ,UnitOfWork.Transaction
         );
-    }
 }
-

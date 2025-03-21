@@ -1,4 +1,5 @@
 using System;
+using FDS.UuidV7.NetCore;
 
 namespace InTouch.UserService.Core;
 
@@ -20,7 +21,7 @@ public class EventStore : BaseEvent, IEntity<Guid>
     /// <summary>
     /// Получает или задает идентификатор.
     /// </summary>
-    public Guid Id { get; private init; } = Guid.NewGuid();
+    public Guid Id { get; private init; } = UuidV7.Generate();
 
     /// <summary>
     /// Получает или задает данные.

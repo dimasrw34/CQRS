@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using InTouch.Infrastructure.Data;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
+using Microsoft.AspNetCore.Http.Json;
 using Npgsql;
 
 namespace InTouch.Infrastructure;
@@ -46,7 +47,9 @@ public static class ConfigureService
         };
         return services.AddNpgsqlDataSource(connectionStringBuilder.ToString());
     }
-    
+
+
+
     /// <summary>
     /// 
     /// </summary>
@@ -63,3 +66,4 @@ public static class ConfigureService
     public static void AddDistributedCacheService(this IServiceCollection services) =>
         services.AddScoped<ICacheService, DistributedCashService>();
 }
+

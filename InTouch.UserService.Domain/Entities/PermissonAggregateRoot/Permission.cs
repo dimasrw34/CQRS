@@ -1,5 +1,6 @@
 ﻿using InTouch.UserService.Core;
 
+
 namespace InTouch.UserService.Domain;
 
 public sealed class Permission  : BaseEntity, IAggregateRoot
@@ -20,4 +21,6 @@ public sealed class Permission  : BaseEntity, IAggregateRoot
     /// Получаем название пермишена 
     /// </summary>
     public string Title { get; }
+
+    public override string ToString() => Title;
 }

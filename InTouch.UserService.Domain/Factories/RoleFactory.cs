@@ -1,6 +1,6 @@
 ﻿namespace InTouch.UserService.Domain;
 
-public class RoleFactory
+public static class RoleFactory
 {
-    
+    public static Role Create(string title) => new(title);
 }

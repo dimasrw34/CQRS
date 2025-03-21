@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,8 +34,10 @@ builder.Services.AddReadDbContext();
 builder.Services.AddReadOnlyRepositories();
 builder.Services.AddCacheService(builder.Configuration);
 
-
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+});
 
 // FluentValidation global configuration.
 ValidatorOptions.Global.DisplayNameResolver = (_, member, _) => member?.Name;

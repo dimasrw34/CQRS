@@ -25,7 +25,7 @@ public sealed class UnitOfWork : IUnitOfWork
         using var connectionTask = connectionFactory.CreateOpenConnectionAsync(cancellationToken);
         _connection = connectionTask.Result;
         _transaction = _connection.BeginTransaction();
-        //Создаем словарь для кэширования, если он еще не создан
+        //Создаем словарь для кэширования
         _cache = new Lazy<ConcurrentDictionary<Type, object>>(() => 
             new ConcurrentDictionary<Type, object>());
    }

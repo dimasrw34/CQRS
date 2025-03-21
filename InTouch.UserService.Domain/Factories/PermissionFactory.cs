@@ -1,5 +1,4 @@
-﻿using Ardalis.Result;
-
+﻿
 namespace InTouch.UserService.Domain;
 
 public static class PermissionFactory

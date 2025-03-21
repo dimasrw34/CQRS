@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\RoleAggregateRoot\" />
+    <Folder Include="Entities\UserRoleBindingAggregateRoot\" />
   </ItemGroup>
 
 </Project>

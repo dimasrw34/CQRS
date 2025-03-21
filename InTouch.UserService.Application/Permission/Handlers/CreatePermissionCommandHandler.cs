@@ -8,7 +8,7 @@ using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 using MediatR;
 
-namespace InTouch.Application.Permission.Handlers;
+namespace InTouch.Application;
 
 public sealed class CreatePermissionCommandHandler(
     IValidator<CreatePermissionCommand> validator,
@@ -37,7 +37,7 @@ public sealed class CreatePermissionCommandHandler(
             _permission.ToJson());
         try
         {
-            await _unitOfWork.GetRepository<UserService.Domain.Permission, Guid>()
+            await _unitOfWork.GetRepository<Permission, Guid>()
                 .CreateAsync(_permission, cancellationToken);
             await _unitOfWork.GetRepository<EventStore, Guid>().StoreAsync(eventStrore, default);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -48,6 +48,6 @@ public sealed class CreatePermissionCommandHandler(
             return Result<CreatedResponse>.Error("Ошибка в сохранении данных на сервер!!! " + e.Message);
         }
         return Result<CreatedResponse>.Success(
-            new CreatedResponse(_permission.Id), "Пользователь успешно зарегистрирован!");
+            new CreatedResponse(_permission.Id), "Права успешно созданы!");
     }
 }

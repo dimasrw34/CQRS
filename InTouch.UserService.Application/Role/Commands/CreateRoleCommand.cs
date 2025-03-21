@@ -1,6 +1,6 @@
-﻿namespace InTouch.Application.Role.Commands;
+﻿using Ardalis.Result;
+using MediatR;
 
-public class CreateRoleCommand
-{
-    
-}
+namespace InTouch.Application;
+
+public sealed record CreateRoleCommand(string Title) : IRequest<Result<CreatedResponse>>;

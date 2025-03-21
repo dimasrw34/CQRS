@@ -1,6 +1,7 @@
-﻿namespace InTouch.UserService.Domain;
+﻿using System;
+using InTouch.UserService.Core;
 
-public class RoleCreatedEvent
-{
-    
-}
+namespace InTouch.UserService.Domain;
+
+public sealed class RoleCreatedEvent(Guid id, string title)
+    : RoleBaseEvent(id, title);
