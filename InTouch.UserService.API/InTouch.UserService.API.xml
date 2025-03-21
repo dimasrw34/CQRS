@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>InTouch.UserService.API</name>
+    </assembly>
+    <members>
+        <member name="M:InTouch.UserService.Controllers.UserController.Create(InTouch.Application.CreateUserCommand)">
+            <summary>
+            Создание пользователя в системе
+            </summary>
+            <remarks>
+            Пример по документации контроллеров
+            </remarks>
+            <param name="command"></param>
+            <returns></returns>
+            <response code="200">Успешное выполнение</response>
+            <response code="400">Ошибка API</response>
+            <response code="500">Ошибка сервера</response>
+        </member>
+        <member name="M:InTouch.UserService.Controllers.UserController.GetAll">
+            <summary>
+            Gets a list of all users.
+            </summary>
+            <response code="200">Returns the list of users.</response>
+            <response code="500">When an unexpected internal error occurs on the server.</response>
+        </member>
+    </members>
+</doc>

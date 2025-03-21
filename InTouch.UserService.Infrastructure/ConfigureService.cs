@@ -4,8 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 using InTouch.Infrastructure.Data;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
-using Microsoft.AspNetCore.Http.Json;
+using InTouch.UserService.Infrastructure.Authentification;
+using InTouch.UserService.Infrastructure.Authorization;
 using Npgsql;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace InTouch.Infrastructure;
 
@@ -48,7 +55,53 @@ public static class ConfigureService
         return services.AddNpgsqlDataSource(connectionStringBuilder.ToString());
     }
 
+    public static IServiceCollection AddAuthentificationAndAuthorization (this IServiceCollection services, IConfiguration configuration)
+    {
+        var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
 
+        services.AddAuthentication(op =>
+        {
+            op.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            op.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+            op.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,op => 
+        {
+            op.RequireHttpsMetadata = true;
+            op.SaveToken = true;
+            op.TokenValidationParameters = new ()
+            { 
+               ValidateIssuer = false,
+               ValidateAudience = false,
+               ValidateLifetime = true,
+               ValidateIssuerSigningKey = true,
+               IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtOptions!.SecretKey))
+            };
+            op.Events = new JwtBearerEvents
+            {
+                OnMessageReceived = context => 
+                {
+                    context.Request.Cookies.TryGetValue("", out var accessToken);
+                    context.Token = accessToken;
+                    
+                    return Task.CompletedTask;
+                }
+            };
+        });
+
+
+        //TODO: реализовать сервис получения Permissions из БД
+        //services.AddScoped<IPermissionService, PermissionService>();
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IJwtProvider,JwtProvider>();
+        
+        services.AddAuthorization();
+        
+        return services;
+    }
 
     /// <summary>
     /// 

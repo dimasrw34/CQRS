@@ -34,8 +34,7 @@ public sealed class User : BaseEntity, IAggregateRoot
         Phone = phone;
         //Добавляем событие в брокер событий
         AddDomainEvent(new UserCreatedEvent(Id, Login, password, name, lastname, email.Address, phone));
-  
-    }
+      }
     /// <summary>
     /// Меняет почтовый адрес пользователя
     /// </summary>
@@ -47,8 +46,6 @@ public sealed class User : BaseEntity, IAggregateRoot
         Email = newEmail;
         AddDomainEvent(new UserUpdatedEvent(Id, Login, Password, Name, LastName, newEmail.Address, Phone));
     }
-    
-    
     
     /// <summary>
     /// Удаляет юзера

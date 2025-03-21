@@ -20,6 +20,17 @@ namespace InTouch.UserService.Controllers;
     [ApiController]
     public class UserController (IMediator mediator) : ControllerBase
     {
+        /// <summary>
+        /// Создание пользователя в системе
+        /// </summary>
+        /// <remarks>
+        /// Пример по документации контроллеров
+        /// </remarks>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="400">Ошибка API</response>
+        /// <response code="500">Ошибка сервера</response>
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]
