@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using InTouch.UserService.Core;
-using InTouch.UserService.Domain;
-using Npgsql;
 
 namespace  InTouch.Infrastructure.Data;
 
 public sealed class UnitOfWork : IUnitOfWork
 {
-
     private readonly IDbConnection _connection;
-    private readonly IDbTransaction? _transaction;
-
     private readonly IDbConnectionFactory _connectionFactory;
+    private readonly IDbTransaction? _transaction;
     private readonly Lazy<ConcurrentDictionary<Type, object>> _cache;
 
     public UnitOfWork(IDbConnectionFactory connectionFactory, CancellationToken cancellationToken = default)
@@ -31,9 +26,8 @@ public sealed class UnitOfWork : IUnitOfWork
    }
 
     public IWriteOnlyRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
+        where TEntity : class, IEntity<TKey>
         where TKey : IEquatable<TKey>
-        where TEntity : IEntity<TKey>
-
     {
         // Создаем ключ для кэша на основе типов TEntity и TKey
         var cacheKey = typeof(TEntity);

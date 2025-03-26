@@ -8,7 +8,8 @@ using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 using MediatR;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public class CreateRolePermissionBindingCommandHandler(
     IValidator<CreateRolePermissionBindingCommand> validator,

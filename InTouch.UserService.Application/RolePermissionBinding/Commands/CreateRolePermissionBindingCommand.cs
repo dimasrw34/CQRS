@@ -1,9 +1,10 @@
 ﻿using System;
 using Ardalis.Result;
 using MediatR;
-using InTouch.UserService.Core;
 
-namespace InTouch.Application;
+
+namespace InTouch.UserService.Application;
+
 /// <summary>
 /// Добавление пермишену роли
 /// </summary>

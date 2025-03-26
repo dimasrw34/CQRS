@@ -1,5 +1,3 @@
-using System;
-
 namespace InTouch.UserService.Infrastructure.Authentification;
 
 internal sealed class CustomClaims

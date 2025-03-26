@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using MediatR;
-using InTouch.Application;
 using InTouch.UserService.Extensions;
 using InTouch.UserService.Models;
+using InTouch.UserService.Application;
 
 namespace InTouch.UserService.Controllers;
 

@@ -4,8 +4,5 @@ using MediatR;
 
 namespace InTouch.UserService.Application;
 
+public sealed record UpdateRoleCommand (Guid Id, string Title) : IRequest<Result>;
 
-public class DeleteUserCommand(Guid id) :IRequest<Result>
-{
-    public Guid Id { get; } = id;
-}

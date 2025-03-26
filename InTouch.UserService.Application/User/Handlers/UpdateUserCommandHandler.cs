@@ -11,7 +11,8 @@ using InTouch.Infrastructure.Data;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public class UpdateUserCommandHandler(
     IValidator<UpdateUserCommand> validator,

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public sealed class CreateRolePermissionBindingCommandValidator: AbstractValidator<CreateRolePermissionBindingCommand>
 {

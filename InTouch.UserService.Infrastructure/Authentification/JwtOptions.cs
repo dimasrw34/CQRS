@@ -1,5 +1,3 @@
-using System;
-
 namespace InTouch.UserService.Infrastructure.Authentification;
 
 public sealed class JwtOptions : IJwtOptions

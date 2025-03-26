@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
 
-
 namespace InTouch.Infrastructure.Data;
 
-public sealed class DbConnectionFactory (Func<NpgsqlDataSource> dataSourceFactory) : IDbConnectionFactory
+internal sealed class NpgConnectionFactory (Func<NpgsqlDataSource> dataSourceFactory) : IDbConnectionFactory
 {
-    private readonly Func<NpgsqlDataSource> _dataSourceFactory= dataSourceFactory ?? throw new ArgumentNullException(nameof(dataSourceFactory));
+    private readonly Func<NpgsqlDataSource> _dataSourceFactory = dataSourceFactory;
     private readonly int _maxRetries = 3;
     private readonly TimeSpan _retryDelay = TimeSpan.FromSeconds(1);
     
@@ -42,7 +41,7 @@ public sealed class DbConnectionFactory (Func<NpgsqlDataSource> dataSourceFactor
             catch (Exception ex)
             {
                 throw new InvalidOperationException(
-                    $"Ошибка при создании подключения к базе данных (попытка {_maxRetries}).",
+                    $"Ошибка при создании подключения к базе данных (попыток {_maxRetries}).",
                     ex);
             }
         }

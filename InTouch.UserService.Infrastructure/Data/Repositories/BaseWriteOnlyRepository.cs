@@ -14,12 +14,11 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
     IDbConnectionFactory connectionFactory,
     IUnitOfWork unitOfWork)
     : IWriteOnlyRepository<TEntity,TKey>
-    where TEntity : IEntity<TKey> 
+    where TEntity : class, IEntity<TKey> 
     where TKey : IEquatable<TKey>
 {
     protected readonly IDbConnectionFactory _connectionFactory = connectionFactory;
     protected readonly IUnitOfWork UnitOfWork = unitOfWork;
-    
     private readonly Dictionary<string, PropertyInfo> ColumnMappings = PropertyHelper.GetColumnMappings(typeof(TEntity));
 
     protected virtual string TableName => typeof(TEntity).Name.ToLower();
@@ -56,6 +55,7 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
     {
         var connection = _connectionFactory.GetConnection;
         var paramsics = GetCreateParams(entity);
+        
         await connection.ExecuteAsync(paramsics.Item1, paramsics.Item2, UnitOfWork.Transaction);
         return await Task.FromResult((TKey)Convert.ChangeType(entity.Id, typeof(TKey)));
     }
@@ -133,4 +133,17 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
             }
             ,UnitOfWork.Transaction
         );
+
+    public async Task<bool> ExistByIdAsync(TKey entity)
+    {
+        return true;
+    }
+    public async Task<bool> ExistValueObjectAsync (TEntity entity)
+    {
+        return true;
+    }
+    public async Task<bool> ExistByIdAndValueObjectAsync (TEntity entity)
+    {
+        return true;
+    }
 }

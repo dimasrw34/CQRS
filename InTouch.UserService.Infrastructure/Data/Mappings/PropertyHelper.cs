@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace InTouch.Infrastructure;
+namespace InTouch.Infrastructure.Data;
 
 // Помощник для работы со свойствами
 public static class PropertyHelper

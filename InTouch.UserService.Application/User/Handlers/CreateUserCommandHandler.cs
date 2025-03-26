@@ -10,7 +10,7 @@ using InTouch.UserService.Domain;
 using InTouch.Infrastructure.Data;
 using InTouch.UserService.Core;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
 
 public sealed class CreateUserCommandHandler(
     IValidator<CreateUserCommand> validator,

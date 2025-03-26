@@ -1,7 +1,11 @@
 ﻿using Ardalis.Result;
 using MediatR;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
 
-public sealed record CreatePermissionCommand(string Title)
+/// <summary>
+/// Создает permission 
+/// </summary>
+/// <param name="Title">Название пермишена</param>
+public sealed record CreatePermissionCommand (string Title)
     : IRequest<Result<CreatedResponse>>;

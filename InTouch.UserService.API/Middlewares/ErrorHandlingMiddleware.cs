@@ -14,7 +14,7 @@ public class ErrorHandlingMiddleware(
     ILogger<ErrorHandlingMiddleware> logger,
     IHostEnvironment environment)
 {
-    private const string ErrorMessage = "An internal error occurred while processing your request.";
+    private const string ErrorMessage = "Произошла внутренняя ошибк при выполнении запроса.";
     private static readonly string ApiResponseJson = ApiResponse.InternalServerError(ErrorMessage).ToJson();
 
     public async Task Invoke(HttpContext httpContext)
@@ -25,7 +25,7 @@ public class ErrorHandlingMiddleware(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An unexpected exception was thrown: {Message}", ex.Message);
+            logger.LogError(ex, "Возникло исклчение: {Message}", ex.Message);
 
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 

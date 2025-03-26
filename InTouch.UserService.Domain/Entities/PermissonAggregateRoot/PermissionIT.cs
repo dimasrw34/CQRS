@@ -3,15 +3,15 @@
 
 namespace InTouch.UserService.Domain;
 
-public sealed class Permission  : BaseEntity, IAggregateRoot
+public sealed class PermissionIT  : BaseEntity, IAggregateRoot
 {
-    public Permission() {}
+    public PermissionIT() {}
 
     /// <summary>
     /// Инициализирует новый экземпляр класса Permission
     /// </summary>
     /// <param name="title"></param>
-    public Permission(string title)
+    public PermissionIT(string title)
     {
         Title = title;
         AddDomainEvent(new PermissionCreatedEvent(Id, Title));

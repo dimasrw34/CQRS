@@ -8,7 +8,8 @@ using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 using MediatR;
 
-namespace InTouch.Application;
+
+namespace InTouch.UserService.Application;
 
 public sealed class CreatePermissionCommandHandler(
     IValidator<CreatePermissionCommand> validator,
@@ -37,8 +38,7 @@ public sealed class CreatePermissionCommandHandler(
             _permission.ToJson());
         try
         {
-            await _unitOfWork.GetRepository<Permission, Guid>()
-                .CreateAsync(_permission, cancellationToken);
+            await _unitOfWork.GetRepository<PermissionIT, Guid>().CreateAsync(_permission, cancellationToken);
             await _unitOfWork.GetRepository<EventStore, Guid>().StoreAsync(eventStrore, default);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }

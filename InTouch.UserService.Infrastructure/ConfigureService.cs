@@ -39,7 +39,7 @@ public static class ConfigureService
         services.AddSingleton<IDbConnectionFactory>(sp =>
         {
             var dataSource = sp.GetService<NpgsqlDataSource>();
-            return new DbConnectionFactory(() => dataSource);
+            return new NpgConnectionFactory(() => dataSource!);
         });
         var connectionStringBuilder = new NpgsqlConnectionStringBuilder()
         {

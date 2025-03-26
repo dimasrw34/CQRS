@@ -9,7 +9,8 @@ using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 using MediatR;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public class DeleteUserCommandHandler(
     IValidator<DeleteUserCommand> validator,

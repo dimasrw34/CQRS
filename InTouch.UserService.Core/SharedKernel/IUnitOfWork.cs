@@ -22,7 +22,7 @@ public interface IUnitOfWork : IDisposable
     Task RollbackChangesAsync(CancellationToken cancellationToken);
 
     IWriteOnlyRepository<TEntity, TKey> GetRepository<TEntity, TKey>() 
-        where TEntity : IEntity<TKey> 
+        where TEntity : class, IEntity<TKey> 
         where TKey : IEquatable<TKey>;
     
     IDbTransaction Transaction { get; }

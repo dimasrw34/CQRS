@@ -10,6 +10,6 @@ public class EmailTypeHandler : SqlMapper.TypeHandler<Email>
     public override Email Parse(object value) =>
         new Email((string)value);
 
-    public override void SetValue(IDbDataParameter parameter, Email? value) => 
-        parameter.Value = value.Address;
+    public override void SetValue(IDbDataParameter parameter, Email value) => 
+        parameter.Value = value!.Address;
 }

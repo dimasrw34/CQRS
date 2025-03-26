@@ -3,7 +3,8 @@ using Ardalis.Result;
 using InTouch.UserService.Core;
 using MediatR;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public sealed class UpdateUserCommand : IRequest<Result>
 {

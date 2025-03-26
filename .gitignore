@@ -387,3 +387,6 @@ FodyWeavers.xsd
 .idea/.idea.InTouch.UserService/.idea/.name
 .idea/.idea.InTouch.UserService/.idea/vcs.xml
 .idea/.idea.InTouch.UserService/.idea/workspace.xml
+InTouch.UserService.API/appsettings.Development.json
+InTouch.UserService.API/appsettings.json
+InTouch.UserService.API/appsettings.json

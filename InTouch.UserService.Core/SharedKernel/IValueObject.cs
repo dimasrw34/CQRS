@@ -1,3 +1,6 @@
 ﻿namespace InTouch.UserService.Core;
 
-public interface IValueObject;
+public interface IValueObject
+{
+    public string ToString();
+}

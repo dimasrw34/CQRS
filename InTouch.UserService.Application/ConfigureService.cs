@@ -1,17 +1,15 @@
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using FluentValidation;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
     
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
 
 public static class ConfigureService
 {
     /// <summary>
-    /// Добавляет command handler в service collection
+    /// Добавляет command handlers в service collection
     /// </summary>
-    /// <param name="services"></param>
+    /// <param name="services">The service collection.</param>
     /// <returns></returns>
     public static IServiceCollection AddCommandHandlers(this IServiceCollection services)
     {
@@ -19,7 +17,7 @@ public static class ConfigureService
         
         return services
             .AddValidatorsFromAssembly(assembly)
-            .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly));
-        //.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>)));
+            .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(assembly)
+            .AddOpenBehavior(typeof(RequestLogginingPipeLineBehavior<,>)));
     }
 }
