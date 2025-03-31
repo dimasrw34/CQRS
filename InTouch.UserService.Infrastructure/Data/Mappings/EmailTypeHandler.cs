@@ -3,7 +3,7 @@ using Dapper;
 
 using InTouch.UserService.Domain;
 
-namespace InTouch.Infrastructure;
+namespace InTouch.UserService.Infrastructure.Data;
 
 public class EmailTypeHandler : SqlMapper.TypeHandler<Email>
 {

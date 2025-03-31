@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using InTouch.Infrastructure;
+using InTouch.UserService.Infrastructure.Data;
 using InTouch.UserService.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -80,7 +80,7 @@ internal static class ServicesCollectionExtensions
                     Name =  "MIT License"
                 }
             });
-
+/*
             swaggerOption.MapType<DateOnly>(() => new OpenApiSchema
             {
                 Type = "string",
@@ -93,6 +93,7 @@ internal static class ServicesCollectionExtensions
                 Format = "time",
                 Example = OpenApiAnyFactory.CreateFromJson("\"13:45:45.0000000\"")
             });
+*/
         });
     }
 }

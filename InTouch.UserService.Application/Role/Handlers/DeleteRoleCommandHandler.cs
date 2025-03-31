@@ -4,6 +4,7 @@ using Ardalis.Result;
 using FluentValidation;
 using InTouch.UserService.Core;
 using MediatR;
+using InTouch.UserService.Infrastructure.Data;
 
 namespace InTouch.UserService.Application;
 

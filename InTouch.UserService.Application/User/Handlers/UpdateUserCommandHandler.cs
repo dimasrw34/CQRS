@@ -7,7 +7,7 @@ using Ardalis.Result.FluentValidation;
 using FluentValidation;
 using MediatR;
 
-using InTouch.Infrastructure.Data;
+using InTouch.UserService.Infrastructure.Data;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 
@@ -27,6 +27,7 @@ public class UpdateUserCommandHandler(
 
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
+        /*
         // Валидируем request
         var _validationResult = await validator.ValidateAsync(request, cancellationToken);
         if (!_validationResult.IsValid)
@@ -78,7 +79,7 @@ public class UpdateUserCommandHandler(
         {
             await mediator.Publish(@event, cancellationToken);
         }
-
+        */
         return Result.SuccessWithMessage("Почта для пользователя обновлена.");
     }
 }

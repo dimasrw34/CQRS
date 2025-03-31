@@ -8,7 +8,8 @@ using Dapper;
 using InTouch.UserService.Core;
 
 
-namespace InTouch.Infrastructure.Data;
+
+namespace InTouch.UserService.Infrastructure.Data;
 
 public class BaseWriteOnlyRepository<TEntity, TKey> (
     IDbConnectionFactory connectionFactory,
@@ -17,46 +18,17 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
     where TEntity : class, IEntity<TKey> 
     where TKey : IEquatable<TKey>
 {
-    protected readonly IDbConnectionFactory _connectionFactory = connectionFactory;
-    protected readonly IUnitOfWork UnitOfWork = unitOfWork;
+    private readonly  IDbConnectionFactory _connectionFactory = connectionFactory;
+    private readonly  IUnitOfWork _unitOfWork = unitOfWork;
     private readonly Dictionary<string, PropertyInfo> ColumnMappings = PropertyHelper.GetColumnMappings(typeof(TEntity));
 
     protected virtual string TableName => typeof(TEntity).Name.ToLower();
-    
-    public async Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        var connection = await _connectionFactory.CreateOpenConnectionAsync(default);
-        var sql = $"SELECT {string.Join(", ", PropertyHelper.GetColumnNames(typeof(TEntity)))} FROM {TableName}";
-        
-        return await connection.QueryAsync<TEntity>(
-            sql,
-            param: null,
-            transaction: UnitOfWork.Transaction,
-            commandTimeout: null,
-            commandType: null
-        );
-    }
-
-    public async Task<TEntity> GetByIdAsync(TKey id, CancellationToken cancellationToken = default)
-    {
-        var connection = _connectionFactory.GetConnection;
-        var sql = $"SELECT {string.Join(", ", PropertyHelper.GetColumnNames(typeof(TEntity)))} FROM {TableName} WHERE \"id\" = @id";
-        
-        return await connection.QueryFirstOrDefaultAsync<TEntity>(
-            sql,
-            param: new { id },
-            transaction: UnitOfWork.Transaction,
-            commandTimeout: null,
-            commandType: null
-        );
-    }
-
     public async Task<TKey> CreateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
         var connection = _connectionFactory.GetConnection;
         var paramsics = GetCreateParams(entity);
         
-        await connection.ExecuteAsync(paramsics.Item1, paramsics.Item2, UnitOfWork.Transaction);
+        await connection.ExecuteAsync(paramsics.Item1, paramsics.Item2, _unitOfWork.Transaction);
         return await Task.FromResult((TKey)Convert.ChangeType(entity.Id, typeof(TKey)));
     }
 
@@ -98,7 +70,7 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
 
     public async Task UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        var connection = _connectionFactory.GetConnection;
+        var connection =_connectionFactory.GetConnection;
         var properties = ColumnMappings.Values.Where(p => p.Name != "id").ToList();
         var sets = string.Join(", ", properties.Select(p => $"\"{p.Name}\" = @{p.Name}"));
 
@@ -111,14 +83,14 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
         }
         parameters.Add("id", ColumnMappings["id"].GetValue(entity));
 
-        await connection.ExecuteAsync(sql, parameters, UnitOfWork.Transaction);
+        await connection.ExecuteAsync(sql, parameters, _unitOfWork.Transaction);
     }
 
     public async Task DeleteAsync(TKey id, CancellationToken cancellationToken = default)
     {
         var sql = $"DELETE FROM {TableName} WHERE \"id\" = @id";
 
-        await _connectionFactory.GetConnection.ExecuteAsync(sql, new { id }, UnitOfWork.Transaction);
+        await _connectionFactory.GetConnection.ExecuteAsync(sql, new { id },_unitOfWork.Transaction);
     }
 
     public async Task StoreAsync(EventStore? eventStore, CancellationToken cancellationToken= default) =>
@@ -131,19 +103,6 @@ public class BaseWriteOnlyRepository<TEntity, TKey> (
                 aggregateid_ = eventStore.AggregateID,
                 createdat_ = eventStore.OccuredOn
             }
-            ,UnitOfWork.Transaction
+            ,_unitOfWork.Transaction
         );
-
-    public async Task<bool> ExistByIdAsync(TKey entity)
-    {
-        return true;
-    }
-    public async Task<bool> ExistValueObjectAsync (TEntity entity)
-    {
-        return true;
-    }
-    public async Task<bool> ExistByIdAndValueObjectAsync (TEntity entity)
-    {
-        return true;
-    }
 }

@@ -1,6 +1,5 @@
 using System;
 using Ardalis.Result;
-using InTouch.UserService.Core;
 using MediatR;
 
 namespace InTouch.UserService.Application;

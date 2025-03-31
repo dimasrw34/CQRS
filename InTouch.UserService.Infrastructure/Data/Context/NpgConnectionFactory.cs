@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
 
-namespace InTouch.Infrastructure.Data;
+namespace InTouch.UserService.Infrastructure.Data;
 
 internal sealed class NpgConnectionFactory (Func<NpgsqlDataSource> dataSourceFactory) : IDbConnectionFactory
 {
@@ -13,7 +13,7 @@ internal sealed class NpgConnectionFactory (Func<NpgsqlDataSource> dataSourceFac
     private readonly int _maxRetries = 3;
     private readonly TimeSpan _retryDelay = TimeSpan.FromSeconds(1);
     
-    public async Task<IDbConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
+    public async Task<NpgsqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
     {
         for (int attempt = 1; attempt <= _maxRetries; attempt++)
         {
@@ -50,7 +50,7 @@ internal sealed class NpgConnectionFactory (Func<NpgsqlDataSource> dataSourceFac
             $"Не удалось создать подключение после {_maxRetries} попыток.");
     }
 
-    public IDbConnection GetConnection { get; private set; } 
+    public  NpgsqlConnection GetConnection { get; private set; } 
 
     private async Task VerifyConnectionAsync(NpgsqlConnection connection, 
         CancellationToken cancellationToken = default)

@@ -1,7 +1,6 @@
 using System;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
-using InTouch.Infrastructure.Data;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 using InTouch.UserService.Infrastructure.Authentification;
@@ -14,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InTouch.Infrastructure;
+namespace InTouch.UserService.Infrastructure.Data;
 
 public static class ConfigureService
 {
@@ -41,6 +40,7 @@ public static class ConfigureService
             var dataSource = sp.GetService<NpgsqlDataSource>();
             return new NpgConnectionFactory(() => dataSource!);
         });
+        
         var connectionStringBuilder = new NpgsqlConnectionStringBuilder()
         {
             Host = "192.168.1.40",
@@ -108,13 +108,10 @@ public static class ConfigureService
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection AddWriteOnlyRepositories(this IServiceCollection services)
-    {
-        return services
-            .AddScoped<IUserWriteOnlyRepository<User, Guid>, UserWriteOnlyRepository>()
-            .AddScoped<IEventStoreRepository,UserEventRepository>()
-            .AddScoped<IUnitOfWork,UnitOfWork>();
-    }
+    public static IServiceCollection AddWriteOnlyRepositories(this IServiceCollection services) => services
+            .AddScoped<IUserWriteOnlyRepository<User, Guid>, UserWriteOnlyRepository<User,Guid>>()
+            .AddScoped<IEventStoreRepository, UserEventRepository>()
+            .AddScoped<IUnitOfWork, UnitOfWork>();
 
     public static void AddDistributedCacheService(this IServiceCollection services) =>
         services.AddScoped<ICacheService, DistributedCashService>();

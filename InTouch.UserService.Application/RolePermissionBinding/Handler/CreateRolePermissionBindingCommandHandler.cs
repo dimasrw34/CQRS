@@ -7,6 +7,7 @@ using Ardalis.Result.FluentValidation;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 using MediatR;
+using InTouch.UserService.Infrastructure.Data;
 
 namespace InTouch.UserService.Application;
 
@@ -39,9 +40,11 @@ public class CreateRolePermissionBindingCommandHandler(
             _rolePermission.ToJson());
         try
         {
+            /*
             await _unitOfWork.GetRepository<RolePermissionBinding, Guid>()
                 .CreateAsync(_rolePermission, cancellationToken);
             await _unitOfWork.GetRepository<EventStore, Guid>().StoreAsync(eventStrore, default);
+            */
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (Exception e)

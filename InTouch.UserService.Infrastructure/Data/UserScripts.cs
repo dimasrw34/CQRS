@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace InTouch.Infrastructure.Data;
+namespace InTouch.UserService.Infrastructure.Data;
 
 public static class UserScripts
 {

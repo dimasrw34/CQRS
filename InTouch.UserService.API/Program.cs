@@ -2,7 +2,7 @@ using System.Globalization;
 using FluentValidation;
 using FluentValidation.Resources;
 using InTouch.UserService.Application;
-using InTouch.Infrastructure;
+using InTouch.UserService.Infrastructure.Data;
 using InTouch.UserService.Infrastructure.Authentification;
 using InTouch.UserService;
 using InTouch.UserService.Core;

@@ -4,27 +4,33 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using InTouch.UserService.Core;
+using InTouch.UserService.Domain;
+using Npgsql;
 
-namespace  InTouch.Infrastructure.Data;
+namespace InTouch.UserService.Infrastructure.Data;
 
-public sealed class UnitOfWork : IUnitOfWork
+public sealed class UnitOfWork 
+: IUnitOfWork
 {
-    private readonly IDbConnection _connection;
+    //private readonly 
+    private readonly NpgsqlConnection _connection;
     private readonly IDbConnectionFactory _connectionFactory;
     private readonly IDbTransaction? _transaction;
+    
     private readonly Lazy<ConcurrentDictionary<Type, object>> _cache;
+    private IUserWriteOnlyRepository<User, Guid> _usersRepository {get;}
 
-    public UnitOfWork(IDbConnectionFactory connectionFactory, CancellationToken cancellationToken = default)
+     public UnitOfWork(IDbConnectionFactory connectionFactory, CancellationToken cancellationToken = default)
     {
         _connectionFactory = connectionFactory;
         using var connectionTask = connectionFactory.CreateOpenConnectionAsync(cancellationToken);
         _connection = connectionTask.Result;
         _transaction = _connection.BeginTransaction();
         //Создаем словарь для кэширования
-        _cache = new Lazy<ConcurrentDictionary<Type, object>>(() => 
-            new ConcurrentDictionary<Type, object>());
+        //_cache = new Lazy<ConcurrentDictionary<Type, object>>(() => 
+        //    new ConcurrentDictionary<Type, object>());
    }
-
+/*
     public IWriteOnlyRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
         where TEntity : class, IEntity<TKey>
         where TKey : IEquatable<TKey>
@@ -49,7 +55,11 @@ public sealed class UnitOfWork : IUnitOfWork
 
         return newRepository;
     }
+*/
 
+    public UserWriteOnlyRepository<User,Guid> Users =>
+            (UserWriteOnlyRepository<User, Guid>)(_usersRepository ?? 
+            new UserWriteOnlyRepository<User, Guid>(_connectionFactory, this));
     public IDbTransaction Transaction => _transaction ?? throw new InvalidOperationException("Транзакция не начата");
     
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
