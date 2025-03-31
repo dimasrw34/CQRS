@@ -11,7 +11,7 @@ public interface IEntity;
 /// Это базовый интерфейс для всех сущностей с ключом.
 /// </summary>
 /// <typeparam name="TKey">Тип ключа сущности.</typeparam>
-public interface IEntity<out TKey> : IEntity where TKey : IEquatable<TKey>
+public interface IEntity<TKey> : IEntity where TKey : IEquatable<TKey>
 {
-    TKey Id { get; }
+    Guid Id { get; }
 }

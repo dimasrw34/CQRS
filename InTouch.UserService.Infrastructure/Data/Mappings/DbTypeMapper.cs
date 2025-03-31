@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace InTouch.Infrastructure.Data;
+namespace InTouch.UserService.Infrastructure.Data;
 
 public static class DbTypeMapper
 {

@@ -1,9 +1,8 @@
 using System;
-using Ardalis.Result;
-using MediatR;
 using InTouch.UserService.Core;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 /// <summary>
 /// Согласно паттерну SQRS, Command не должен ничего и никогда возвращать,
@@ -13,7 +12,4 @@ namespace InTouch.Application;
 /// как-бы не влияет на поведение объекта Command. 
 /// </summary>
 /// <param name="id">Идентификатор создаваемого объекта</param>
-public sealed class CreatedResponse (Guid id) : IResponse
-{
-    public Guid Id { get; } = id;
-}
+public sealed record CreatedResponse (Guid id) : IResponse;

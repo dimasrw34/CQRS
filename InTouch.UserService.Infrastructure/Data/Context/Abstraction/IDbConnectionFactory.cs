@@ -1,11 +1,12 @@
 ﻿using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using Npgsql;
 
-namespace InTouch.Infrastructure.Data;
+namespace InTouch.UserService.Infrastructure.Data;
 
 public interface IDbConnectionFactory
 {
-    Task<IDbConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken);
-    IDbConnection GetConnection { get; }
+    Task<NpgsqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken);
+    NpgsqlConnection GetConnection { get; }
 }

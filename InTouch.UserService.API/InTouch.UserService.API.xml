@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>InTouch.UserService.API</name>
+    </assembly>
+    <members>
+        <member name="T:InTouch.UserService.Controllers.UserController">
+            <summary>
+            Управление данными пользователя и назначение прав
+            </summary>
+        </member>
+        <member name="M:InTouch.UserService.Controllers.UserController.#ctor(MediatR.IMediator)">
+            <summary>
+            Управление данными пользователя и назначение прав
+            </summary>
+        </member>
+        <member name="M:InTouch.UserService.Controllers.UserController.Create(InTouch.UserService.Application.CreateUserCommand)">
+            <summary>
+            Создание пользователя в системе
+            </summary>
+            <remarks>
+            Пример по документации контроллеров
+            </remarks>
+            <param login="command">Логин пользователя</param>
+            <param password="command">Пароль пользователя</param>
+            <param firstName="command">Имя</param>
+            <param lastName="command">Фамилия</param>
+            <param email="command">Почта, на которую будут приходить уведомления</param>
+            <param phone="command">Телефон, на который будут приходить SMS</param>
+            <returns name = "IActionResult"></returns>
+            <response code="200">Успешное выполнение</response>
+            <response code="400">Ошибка API</response>
+            <response code="500">Ошибка сервера</response>
+        </member>
+        <member name="M:InTouch.UserService.Controllers.UserController.GetAll">
+            <summary>
+            Gets a list of all users.
+            </summary>
+            <response code="200">Returns the list of users.</response>
+            <response code="500">When an unexpected internal error occurs on the server.</response>
+        </member>
+        <member name="M:InTouch.UserService.ServicesCollectionExtensions.AddSwagger(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            Настройка swagger'a
+            </summary>
+            <param name="services"></param>
+        </member>
+    </members>
+</doc>

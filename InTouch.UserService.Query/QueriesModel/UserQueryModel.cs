@@ -1,4 +1,5 @@
 using System;
+using InTouch.UserService.Core;
 
 namespace InTouch.UserService.Query;
 

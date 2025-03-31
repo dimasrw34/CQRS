@@ -1,9 +1,15 @@
 ﻿using FluentValidation;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
 
+/// <summary>
+/// Валидатор CreatePermissionCommand
+/// </summary>
 public class CreatePermissionCommandValidator : AbstractValidator<CreatePermissionCommand>
 {
+    /// <summary>
+    /// Конструктор
+    /// </summary>
     public CreatePermissionCommandValidator()
     {
         RuleFor(command => command.Title)

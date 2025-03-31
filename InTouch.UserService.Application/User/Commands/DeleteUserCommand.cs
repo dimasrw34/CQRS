@@ -2,7 +2,8 @@ using System;
 using Ardalis.Result;
 using MediatR;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public class DeleteUserCommand(Guid id) :IRequest<Result>
 {

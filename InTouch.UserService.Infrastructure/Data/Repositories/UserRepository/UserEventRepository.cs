@@ -6,7 +6,7 @@ using InTouch.UserService.Domain;
 using Npgsql;
 using Dapper;
 
-namespace InTouch.Infrastructure.Data;
+namespace InTouch.UserService.Infrastructure.Data;
 
 public sealed class UserEventRepository(
     IDbConnectionFactory connectionFactory,

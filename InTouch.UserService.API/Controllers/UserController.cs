@@ -3,22 +3,40 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
 using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
-using InTouch.Application;
 using InTouch.UserService.Extensions;
 using InTouch.UserService.Models;
 using InTouch.UserService.Query;
-using Microsoft.AspNetCore.Http;
+using InTouch.UserService.Application;
 
 namespace InTouch.UserService.Controllers;
 
+    /// <summary>
+    /// Управление данными пользователя и назначение прав
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UserController (IMediator mediator) : ControllerBase
     {
+        /// <summary>
+        /// Создание пользователя в системе
+        /// </summary>
+        /// <remarks>
+        /// Пример по документации контроллеров
+        /// </remarks>
+        /// <param login="command">Логин пользователя</param>
+        /// <param password="command">Пароль пользователя</param>
+        /// <param firstName="command">Имя</param>
+        /// <param lastName="command">Фамилия</param>
+        /// <param email="command">Почта, на которую будут приходить уведомления</param>
+        /// <param phone="command">Телефон, на который будут приходить SMS</param>
+        /// <returns name = "IActionResult"></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="400">Ошибка API</response>
+        /// <response code="500">Ошибка сервера</response>
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces(MediaTypeNames.Application.Json)]

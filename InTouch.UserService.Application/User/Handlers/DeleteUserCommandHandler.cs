@@ -2,14 +2,14 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.Result;
-using Ardalis.Result.FluentValidation;
 using FluentValidation;
-using InTouch.Infrastructure.Data;
+using InTouch.UserService.Infrastructure.Data;
 using InTouch.UserService.Core;
 using InTouch.UserService.Domain;
 using MediatR;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public class DeleteUserCommandHandler(
     IValidator<DeleteUserCommand> validator,
@@ -26,13 +26,16 @@ public class DeleteUserCommandHandler(
     
     public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
+        /*
         //валидируккм request
         var validatorResult = await validator.ValidateAsync(request, cancellationToken);
         if (!validatorResult.IsValid)
             return Result.Invalid(validatorResult.AsErrors());
         
         //проверяем наличие юзера в базе
-        var user = _repository.GetByIdAsync(request.Id).Result;
+        //var user = _repository.GetByIdAsync(request.Id).Result;
+
+        
         if (user is null)
             return Result.NotFound("Пользователь с идентификатором " + request.Id + " отсутствует.");
         
@@ -64,7 +67,7 @@ public class DeleteUserCommandHandler(
         {
             await mediator.Publish(@event, cancellationToken);
         }
-        
+     */   
         return Result.SuccessWithMessage("Пользователь удален");
     }
 }

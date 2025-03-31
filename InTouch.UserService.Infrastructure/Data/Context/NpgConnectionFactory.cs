@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
 
+namespace InTouch.UserService.Infrastructure.Data;
 
-namespace InTouch.Infrastructure.Data;
-
-public sealed class DbConnectionFactory (Func<NpgsqlDataSource> dataSourceFactory) : IDbConnectionFactory
+internal sealed class NpgConnectionFactory (Func<NpgsqlDataSource> dataSourceFactory) : IDbConnectionFactory
 {
-    private readonly Func<NpgsqlDataSource> _dataSourceFactory= dataSourceFactory ?? throw new ArgumentNullException(nameof(dataSourceFactory));
+    private readonly Func<NpgsqlDataSource> _dataSourceFactory = dataSourceFactory;
     private readonly int _maxRetries = 3;
     private readonly TimeSpan _retryDelay = TimeSpan.FromSeconds(1);
     
-    public async Task<IDbConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
+    public async Task<NpgsqlConnection> CreateOpenConnectionAsync(CancellationToken cancellationToken = default)
     {
         for (int attempt = 1; attempt <= _maxRetries; attempt++)
         {
@@ -42,7 +41,7 @@ public sealed class DbConnectionFactory (Func<NpgsqlDataSource> dataSourceFactor
             catch (Exception ex)
             {
                 throw new InvalidOperationException(
-                    $"Ошибка при создании подключения к базе данных (попытка {_maxRetries}).",
+                    $"Ошибка при создании подключения к базе данных (попыток {_maxRetries}).",
                     ex);
             }
         }
@@ -51,7 +50,7 @@ public sealed class DbConnectionFactory (Func<NpgsqlDataSource> dataSourceFactor
             $"Не удалось создать подключение после {_maxRetries} попыток.");
     }
 
-    public IDbConnection GetConnection { get; private set; } 
+    public  NpgsqlConnection GetConnection { get; private set; } 
 
     private async Task VerifyConnectionAsync(NpgsqlConnection connection, 
         CancellationToken cancellationToken = default)

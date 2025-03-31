@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
 
 public sealed class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
 {

@@ -3,13 +3,13 @@ using Dapper;
 
 using InTouch.UserService.Domain;
 
-namespace InTouch.Infrastructure;
+namespace InTouch.UserService.Infrastructure.Data;
 
 public class EmailTypeHandler : SqlMapper.TypeHandler<Email>
 {
     public override Email Parse(object value) =>
         new Email((string)value);
 
-    public override void SetValue(IDbDataParameter parameter, Email? value) => 
-        parameter.Value = value.Address;
+    public override void SetValue(IDbDataParameter parameter, Email value) => 
+        parameter.Value = value!.Address;
 }

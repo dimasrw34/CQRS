@@ -1,7 +1,8 @@
 using System.Data;
 using FluentValidation;
 
-namespace InTouch.Application;
+namespace InTouch.UserService.Application;
+
 
 public class DeleteUserCommandValidator : AbstractValidator<DeleteUserCommand>
 {

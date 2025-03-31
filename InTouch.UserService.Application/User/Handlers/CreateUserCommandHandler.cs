@@ -7,10 +7,11 @@ using FluentValidation;
 using MediatR;
 
 using InTouch.UserService.Domain;
-using InTouch.Infrastructure.Data;
 using InTouch.UserService.Core;
+using InTouch.UserService.Infrastructure.Data;
 
-namespace InTouch.Application;
+
+namespace InTouch.UserService.Application;
 
 public sealed class CreateUserCommandHandler(
     IValidator<CreateUserCommand> validator,
@@ -23,6 +24,15 @@ public sealed class CreateUserCommandHandler(
 {
     private readonly IUserWriteOnlyRepository<User, Guid> _userWriteOnlyRepository = userWriteOnlyRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+    public record Person(int Age, int Height);
+    public string CategorizePerson (Person person) => person switch
+    {
+        var (age, height) when age < 18  && height < 160 => "Young and short",
+        var (age, height) when age < 18  && height >= 160 => "Young and tall",
+        _ => "Unknown person",
+    };
+
    
     public async Task<Result<CreatedResponse>> Handle(
         CreateUserCommand request,
@@ -39,7 +49,10 @@ public sealed class CreateUserCommandHandler(
         // Создаем email value object.
         var email = Email.Create(request.Email).Value;
         
-        // Проверяем, что пользователь с такой почтой создан. 
+        
+
+
+
         /*if (await userWriteOnlyRepository.ExistByEmailAsync(email))
         {
             return Result<CreatedUserResponse>.Error("Пользователь с данной электронной почтой уже существует.");
@@ -55,6 +68,17 @@ public sealed class CreateUserCommandHandler(
                 email,
             request.Phone);
         
+        
+        
+        // Проверяем, что пользователь с таким именем создан. 
+        
+        if (await _unitOfWork.Users.ExistByLoginAsync(new FindByIdAndLoginSpecification (
+            new FindByIdSpecification(_user.Id),
+            new FindByLoginSpecification (_user.Login))))
+        {
+            return Result<CreatedResponse>.Error("Пользователь с таким именем уже существует.");
+        }
+        
         //Создаем ventStore
        var eventStore = new EventStore(
            _user.Id,
@@ -66,8 +90,8 @@ public sealed class CreateUserCommandHandler(
             //где бы не произошла ошибка, данные всегда будут консистентны
             
             // Сохранение изменений в БД и срабатывание событий.
-            await _unitOfWork.GetRepository<User, Guid>().CreateAsync(_user, cancellationToken);
-            await _unitOfWork.GetRepository<EventStore, Guid>().StoreAsync(eventStore, default);
+            //await _unitOfWork..GetRepository<User, Guid>().CreateAsync(_user, cancellationToken);
+            //await _unitOfWork.GetRepository<EventStore, Guid>().StoreAsync(eventStore, default);
             
             //уведомляем через MediatR.INotify для сохранения в БД событий
             /*foreach (var @event in _user.DomainEvents)
